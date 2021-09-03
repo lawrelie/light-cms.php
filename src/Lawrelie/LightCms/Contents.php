@@ -97,7 +97,7 @@ class Contents {
             foreach ($this->parent->children as $sibling) {
                 try {
                     if ($this->is($prev)) {
-                        return $prev;
+                        return $sibling;
                     }
                 } catch (Throwable) {}
                 $prev = $sibling;
