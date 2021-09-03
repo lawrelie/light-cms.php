@@ -36,8 +36,8 @@ class Contents {
     }
     protected function getProperty_compare(): callable {
         try {
-            $order = match ($this->order) {'ASC' => 1, 'DESC' => -1, default => throw new Exception};
-            $orderby_lc = strtolower(mb_convert_kana($this->orderby, 'a'));
+            $order = match ($this->inherit('order')) {'ASC' => 1, 'DESC' => -1, default => throw new Exception};
+            $orderby_lc = strtolower(mb_convert_kana($this->inherit('orderby'), 'a'));
             [$compare, $orderby] = match ($orderby_lc) {
                 'id' => ['strnatcmp', fn(self $contents): string => $contents->$orderby_lc],
                 'name' => [[$this->cms->collator, 'compare'], fn(self $contents): string => $contents->$orderby_lc],
@@ -46,7 +46,7 @@ class Contents {
                         try {
                             return $a->getTimestamp() - $b->getTimestamp();
                         } catch (Throwable) {}
-                        return !$a ? (!$b ? 0 : -1) : 1;
+                        return !$a ? (!$b ? 0 : 1) : -1;
                     }, fn(self $contents): ?DateTimeInterface => $contents->$orderby_lc,
                 ],
                 default => throw new Exception,
