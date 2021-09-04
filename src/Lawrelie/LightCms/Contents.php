@@ -5,16 +5,18 @@ class Contents {
     use GetProperty;
     public function __construct(iterable $instance, private Cms $cms, private ?self $parent = null, private string $path = '') {
         $this->setProperties($instance);
-        if (($this->private && !$this->cms->private)) {
-            throw new Exception;
-        }
-        try {
-            if (!!($this->date ?? $this->update)->diff($this->cms->createDateTime())->invert) {
+        if (!$this->cms->private) {
+            if ($this->private) {
                 throw new Exception;
             }
-        } catch (Exception $e) {
-            throw $e;
-        } catch (Throwable) {}
+            try {
+                if (!!($this->date ?? $this->update)->diff($this->cms->createDateTime())->invert) {
+                    throw new Exception;
+                }
+            } catch (Exception $e) {
+                throw $e;
+            } catch (Throwable) {}
+        }
     }
     public function createChild(iterable|string $instance, ?string $className = null): self {
         return $this->cms->createContents($instance, $this, $className ?? static::class);
