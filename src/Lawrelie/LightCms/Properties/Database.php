@@ -49,7 +49,7 @@ class Database extends Property {
         return $this->origin->prepare('SELECT llc_id FROM llc_contents WHERE llc_id IS ?');
     }
     protected function getProperty_queryContentsInstanceByPathWithMtime(): PDOStatement {
-        return $this->origin->prepare('SELECT llc_instance FROM llc_contents WHERE llc_path IS :llc_path AND llc_mtime NOT NULL AND llc_mtime >= :llc_mtime LIMIT 1');
+        return $this->origin->prepare('SELECT llc_instance FROM llc_contents WHERE llc_path IS :llc_path AND llc_mtime NOT NULL AND llc_mtime > :llc_mtime ORDER BY llc_mtime DESC LIMIT 1');
     }
     protected function getProperty_queryContentsUpdateByIdLike(): PDOStatement {
         return $this->origin->prepare('SELECT llc_update FROM llc_contents WHERE llc_update NOT NULL AND llc_id LIKE ? ORDER BY llc_update DESC LIMIT 1');

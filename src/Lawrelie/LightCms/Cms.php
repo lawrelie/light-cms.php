@@ -72,9 +72,8 @@ class Cms {
             throw new Exception;
         }
         $path = realpath($instance);
-        $filemtime = filemtime($path);
         try {
-            $this->db->queryContentsInstanceByPathWithMtime->bindValue(':llc_mtime', $filemtime, PDO::PARAM_INT);
+            $this->db->queryContentsInstanceByPathWithMtime->bindValue(':llc_mtime', filemtime($path), PDO::PARAM_INT);
             $this->db->queryContentsInstanceByPathWithMtime->bindValue(':llc_path', $path, PDO::PARAM_STR);
             $this->db->queryContentsInstanceByPathWithMtime->execute();
             $row = $this->db->queryContentsInstanceByPathWithMtime->fetch();
@@ -106,7 +105,7 @@ class Cms {
         try {
             $this->db->addContentsInstanceFromFileById->bindValue(':llc_id', $contents->id->origin, PDO::PARAM_STR);
             $this->db->addContentsInstanceFromFileById->bindValue(':llc_instance', serialize($included), PDO::PARAM_STR);
-            $this->db->addContentsInstanceFromFileById->bindValue(':llc_mtime', $filemtime, PDO::PARAM_INT);
+            $this->db->addContentsInstanceFromFileById->bindValue(':llc_mtime', time(), PDO::PARAM_INT);
             $this->db->addContentsInstanceFromFileById->bindValue(':llc_path', $path, PDO::PARAM_STR);
             $this->db->addContentsInstanceFromFileById->execute();
             $this->db->addContentsInstanceFromFileById->closeCursor();
