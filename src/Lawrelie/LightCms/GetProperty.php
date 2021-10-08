@@ -5,9 +5,9 @@ trait GetProperty {
     private array $_getProperties = [];
     private array $_setProperties = [];
     public function __get(string $name): mixed {
-        try {
+        if (array_key_exists($name, $this->_getProperties)) {
             return $this->_getProperties[$name];
-        } catch (Throwable) {}
+        }
         $value = $this->_setProperties[$name] ?? null;
         $get = [$this, 'getProperty_' . $name];
         if (is_callable($get)) {
