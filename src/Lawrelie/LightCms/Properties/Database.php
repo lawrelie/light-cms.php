@@ -3,14 +3,14 @@ namespace Lawrelie\LightCms\Properties;
 use Lawrelie\LightCms as llc;
 use PDO, PDOStatement, Throwable;
 class Database extends Property {
-    public function __construct(private PDO $origin, llc\Cms $cms) {
+    public function __construct(private PDO $_origin, llc\Cms $cms) {
         parent::__construct([], $cms);
     }
     protected function getProperty_origin(): PDO {
-        $this->origin->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        $this->_origin->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
         try {
-            $this->origin->beginTransaction();
-            $this->origin->exec('CREATE TABLE IF NOT EXISTS llc_contents (llc_id TEXT PRIMARY KEY UNIQUE)');
+            $this->_origin->beginTransaction();
+            $this->_origin->exec('CREATE TABLE IF NOT EXISTS llc_contents (llc_id TEXT PRIMARY KEY UNIQUE)');
             $columns = [
                 'TEXT PRIMARY KEY UNIQUE' => ['id'],
                 'TEXT DEFAULT NULL' => ['date', 'instance', 'path', 'update'],
@@ -19,15 +19,15 @@ class Database extends Property {
             foreach ($columns as $def => $names) {
                 foreach ($names as $name) {
                     try {
-                        $this->origin->exec("ALTER TABLE llc_contents ADD llc_$name $def");
+                        $this->_origin->exec("ALTER TABLE llc_contents ADD llc_$name $def");
                     } catch (Throwable) {}
                 }
             }
-            $this->origin->commit();
+            $this->_origin->commit();
         } catch (Throwable) {
-            $this->origin->rollBack();
+            $this->_origin->rollBack();
         }
-        return $this->origin;
+        return $this->_origin;
     }
     protected function getProperty_addContentsById(): PDOStatement {
         return $this->origin->prepare('INSERT INTO llc_contents (llc_id) VALUES (?)');
