@@ -139,10 +139,7 @@ class Contents {
         return $this->getProperty_bool($var);
     }
     protected function getProperty_tags(mixed $var): array {
-        $tags = [];
-        try {
-            $tags = $this->parent->tags;
-        } catch (Throwable) {}
+        $tags = $this->parent?->tags ?? [];
         try {
             foreach ($var as $v) {
                 try {
