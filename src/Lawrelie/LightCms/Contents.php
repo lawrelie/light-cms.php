@@ -5,17 +5,8 @@ class Contents {
     use GetProperty;
     public function __construct(iterable $instance, private Cms $cms, private ?self $parent = null, private string $path = '') {
         $this->setProperties($instance);
-        if (!$this->cms->private) {
-            if ($this->private) {
-                throw new Exception;
-            }
-            try {
-                if (!!($this->date ?? $this->update)->diff($this->cms->createDateTime())->invert) {
-                    throw new Exception;
-                }
-            } catch (Exception $e) {
-                throw $e;
-            } catch (Throwable) {}
+        if (!$this->cms->private && ($this->private || !!$this->date?->diff($this->cms->createDateTime())?->invert)) {
+            throw new Exception;
         }
     }
     public function createChild(iterable|string $instance, ?string $className = null): self {
@@ -76,12 +67,6 @@ class Contents {
                 return $this->cms->createDateTime($var);
             } catch (Throwable) {}
         }
-        try {
-            $this->cms->db->queryContentsDateByIdLike->execute([addcslashes($this->id . Properties\Id::SEPARATOR, '%_\\') . '%']);
-            $row = $this->cms->db->queryContentsDateByIdLike->fetch();
-            $this->cms->db->queryContentsDateByIdLike->closeCursor();
-            return $this->cms->createDateTime($row['llc_date']);
-        } catch (Throwable) {}
         return null;
     }
     protected function getProperty_description(mixed $var): string {
@@ -183,6 +168,12 @@ class Contents {
             $row = $this->cms->db->queryContentsUpdateByIdLike->fetch();
             $this->cms->db->queryContentsUpdateByIdLike->closeCursor();
             return $this->cms->createDateTime($row['llc_update']);
+        } catch (Throwable) {}
+        try {
+            $this->cms->db->queryContentsDateByIdLike->execute([addcslashes($this->id . Properties\Id::SEPARATOR, '%_\\') . '%']);
+            $row = $this->cms->db->queryContentsDateByIdLike->fetch();
+            $this->cms->db->queryContentsDateByIdLike->closeCursor();
+            return $this->cms->createDateTime($row['llc_date']);
         } catch (Throwable) {}
         return $this->date;
     }
