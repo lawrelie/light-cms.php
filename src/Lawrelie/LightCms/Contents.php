@@ -35,11 +35,11 @@ class Contents {
                 'id' => ['strnatcmp', fn(self $contents): string => $contents->$orderby_lc],
                 'name' => [[$this->cms->collator, 'compare'], fn(self $contents): string => $contents->$orderby_lc],
                 'date', 'update' => [
-                    function(?DateTimeInterface $a, ?DateTimeInterface $b): int {
+                    function(?DateTimeInterface $a, ?DateTimeInterface $b) use($order): int {
                         try {
                             return $a->getTimestamp() - $b->getTimestamp();
                         } catch (Throwable) {}
-                        return !$a ? (!$b ? 0 : 1) : -1;
+                        return (!$a ? (!$b ? 0 : 1) : -1) * $order;
                     }, fn(self $contents): ?DateTimeInterface => $contents->$orderby_lc,
                 ],
                 default => throw new Exception,
