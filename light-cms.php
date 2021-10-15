@@ -5,13 +5,6 @@ set_error_handler(function(int $errno, string $errstr, string $errfile, int $err
     }
     return true;
 });
-set_exception_handler(function(Throwable $ex): void {
-    if (!error_reporting()) {
-        return;
-    }
-    printf("Uncaught %s\n", htmlspecialchars($ex, ENT_HTML5 | ENT_QUOTES));
-    die;
-});
 spl_autoload_register(function(string $className): void {
     $filename = sprintf('%s/src/%s.php', __DIR__, strtr($className, '\\', '/'));
     if (file_exists($filename)) {
