@@ -139,9 +139,15 @@ class Cms {
     }
     protected function getProperty_contents(): Contents {
         try {
-            $queried = $this->index->query($this->query);
-            if (!!$queried) {
-                return $queried;
+            $query = (string) $this->createId($this->query);
+            while ('' !== $query) {
+                try {
+                    $queried = $this->index->query($query);
+                    if (!!$queried) {
+                        return $queried;
+                    }
+                } catch (Throwable) {}
+                $query = substr($query, 0, strrpos($query, Properties\Id::SEPARATOR));
             }
         } catch (Throwable) {}
         return $this->index;
